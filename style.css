@@ -185,11 +185,23 @@ button:active {
   width: 80px;
   height: 80px;
   border-radius: 50%;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  backdrop-filter: blur(2px);
-  margin: 0;
+  touch-action: none; /* Prevent double-tap zoom on buttons */
+  cursor: pointer;
+}
+
+.dpad-btn:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Hide on Desktop screens automatically */
+@media (min-width: 1024px) {
+  #mobile-controls {
+    display: none !important;
+  }
 }
 
 /* Zone Announcer */
