@@ -29,17 +29,19 @@
           <div class="score-container">
             <div id="score-text">0</div>
           </div>
-          <button id="pause-btn" class="icon-btn">
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="#4a3e3d"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-          </button>
-          <button id="btn-camera" style="position: absolute; top: 20px; right: 80px; background: none; border: 2px solid white; border-radius: 5px; cursor: pointer; padding: 5px; z-index: 9999; pointer-events: auto;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
-          </button>
-          <div class="solar-meter-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 5px;">
+          <button id="pause-btn" style="position: absolute; top: 20px; left: 20px; background: none; border: 2px solid white; border-radius: 5px; cursor: pointer; padding: 5px; z-index: 9999; pointer-events: auto;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+
+        <button id="btn-camera" style="position: absolute; top: 20px; right: 20px; background: none; border: 2px solid white; border-radius: 5px; cursor: pointer; padding: 5px; z-index: 9999; pointer-events: auto;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+        </button>
+        
+        <div class="solar-meter-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 5px;">
             <div class="meter-bg" style="width: 100%; height: 100%; border: none; border-radius: 0; background: rgba(0,0,0,0.2);">
               <div id="solar-fill" class="meter-fill" style="background: #fff; height: 100%;"></div>
             </div>
-          </div>
+        </div>
         </div>
 
         <!-- Aesthetic Cockpit Dashboard -->
@@ -65,22 +67,20 @@
           </div>
         </div>
 
-        <!-- Mobile Controls -->
+        <!-- Mobile Controls (Unified Center Controller) -->
         <div id="mobile-controls">
-          <div class="dpad-vertical">
-            <button id="btn-up" class="dpad-btn">
+          <div class="dpad-container">
+            <button id="btn-up" class="dpad-btn dpad-up">
                <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></svg>
             </button>
-            <button id="btn-down" class="dpad-btn" style="margin-top: 10px;">
-               <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
-            </button>
-          </div>
-          <div class="dpad-horizontal">
-            <button id="btn-left" class="dpad-btn" style="position: absolute; left: 10%; top: 50%; transform: translateY(-50%);">
+            <button id="btn-left" class="dpad-btn dpad-left">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
             </button>
-            <button id="btn-right" class="dpad-btn" style="position: absolute; right: 10%; top: 50%; transform: translateY(-50%);">
+            <button id="btn-right" class="dpad-btn dpad-right">
                <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+            </button>
+            <button id="btn-down" class="dpad-btn dpad-down">
+               <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
             </button>
           </div>
         </div>
