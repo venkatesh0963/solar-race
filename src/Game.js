@@ -61,16 +61,26 @@ export default class Game {
     // Bind Camera Button
     const camBtn = document.getElementById('btn-camera');
     if (camBtn) {
-        camBtn.addEventListener('click', () => this.toggleCamera());
+        const handleCamToggle = (e) => {
+          if (e) e.preventDefault();
+          this.toggleCamera();
+        };
+        camBtn.addEventListener('click', handleCamToggle);
+        camBtn.addEventListener('touchstart', handleCamToggle);
     }
+
+    // Bind Keyboard 'C' key
     window.addEventListener('keydown', (e) => {
-        if (e.code === 'KeyC') this.toggleCamera();
+        if (e.code === 'KeyC' || e.key.toLowerCase() === 'c') {
+            this.toggleCamera();
+        }
     });
   }
 
   toggleCamera() {
     this.cameraMode++;
     if (this.cameraMode > 3) this.cameraMode = 1;
+    console.log("Camera toggled to mode:", this.cameraMode);
   }
 
   start() {
