@@ -247,7 +247,7 @@ button:active {
 /* Cockpit Dashboard Aesthetics */
 #cockpit-dashboard {
   position: absolute;
-  bottom: 0px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -262,11 +262,9 @@ button:active {
 
 .dash-panel {
   background: linear-gradient(180deg, rgba(20,25,35,0.8) 0%, rgba(10,15,20,1) 100%);
-  border-top: 3px solid #2a3b4c;
-  border-left: 2px solid #2a3b4c;
-  border-right: 2px solid #2a3b4c;
-  box-shadow: 0 -10px 30px rgba(0,255,255,0.1) inset;
-  border-radius: 20px 20px 0 0;
+  border: 2px solid #2a3b4c;
+  box-shadow: 0 0 30px rgba(0,255,255,0.1) inset;
+  border-radius: 20px;
   padding: 15px;
   display: flex;
   gap: 15px;
