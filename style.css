@@ -154,14 +154,14 @@ button:active {
   min-width: 150px;
 }
 
-/* Mobile Controls (Unified D-Pad) */
+/* Mobile Controls (Inverted-T D-Pad) */
 #mobile-controls {
   position: absolute;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 130px;
   pointer-events: none;
   z-index: 10000;
 }
@@ -174,32 +174,29 @@ button:active {
 
 .dpad-btn {
   position: absolute;
-  background: #333;
-  border: 2px solid #555;
+  background: rgba(15, 25, 35, 0.6);
+  border: 1px solid #0088ff; /* thin blue border */
   width: 60px;
   height: 60px;
-  border-radius: 8px;
-  color: white;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
   touch-action: none;
   cursor: pointer;
   pointer-events: auto;
-  box-shadow: 0 4px 0 #111, 0 5px 15px rgba(0,0,0,0.5);
-  transition: transform 0.1s, box-shadow 0.1s;
+  box-shadow: none;
+  transition: background 0.1s;
 }
 
 .dpad-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 #111, 0 1px 5px rgba(0,0,0,0.5);
-  background: #444;
+  background: rgba(0, 170, 255, 0.4);
 }
 
 .dpad-up { top: 0; left: 50%; transform: translateX(-50%); }
 .dpad-down { bottom: 0; left: 50%; transform: translateX(-50%); }
-.dpad-left { left: 0; top: 50%; transform: translateY(-50%); }
-.dpad-right { right: 0; top: 50%; transform: translateY(-50%); }
+.dpad-left { bottom: 0; left: 0; }
+.dpad-right { bottom: 0; right: 0; }
 
 /* Hide on Desktop screens automatically */
 @media (min-width: 1024px) {
