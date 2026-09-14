@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+:root {
+  --primary-color: #ffb703;
+  --bg-dark: rgba(0, 0, 0, 0.7);
+  --text-light: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+  background-color: #111;
+  color: var(--text-light);
+  touch-action: none; /* Prevent browser swipe-to-refresh on mobile */
+}
+
+/* Three.js Canvas Container */
+#game-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+/* UI Overlay Layer */
+#ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  pointer-events: none; /* Let clicks pass through to canvas by default */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Make panels and buttons interactive */
+.panel, button, #mobile-controls {
+  pointer-events: auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Panels (Start / Game Over / Pause) */
+.panel {
+  background: var(--bg-dark);
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid var(--primary-color);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 0 20px rgba(255, 183, 3, 0.3);
+}
+
+.panel h1 {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px var(--primary-color);
+}
+
+.panel h2 {
+  font-size: 2.5rem;
+  color: #ff3333;
+  margin-bottom: 15px;
+}
+
+.controls-info {
+  margin: 20px 0;
+  font-size: 0.9rem;
+  color: #ccc;
+  line-height: 1.5;
+}
+
+button {
+  background: var(--primary-color);
+  color: #000;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  margin-top: 20px;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--primary-color);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+.icon-btn {
+  background: white;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  margin-right: 15px;
+  clip-path: polygon(15% 0, 100% 0, 85% 100%, 0% 100%);
+  border-radius: 0;
+}
+
+/* HUD */
+#hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0;
+  width: 100%;
+}
+
+.score-container {
+  background: white;
+  color: #4a3e3d; /* Dark brownish grey like the image */
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 2rem;
+  padding: 10px 40px 10px 20px;
+  clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
+  margin-top: 15px;
+  min-width: 150px;
+}
+
+/* Mobile Controls */
+#mobile-controls {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.dpad-vertical {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+}
+
+.dpad-horizontal {
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.dpad-btn {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(2px);
+  margin: 0;
+}
+
+/* Zone Announcer */
+#zone-announcer {
+  position: absolute;
+  top: 30%;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+}
+
+#zone-text {
+  font-size: 3.5rem;
+  color: #fff;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px #ff9e00;
+  letter-spacing: 12px;
+  margin: 0;
+}
+
+.zone-animate {
+  animation: fadeOutZoom 3.5s forwards ease-in-out;
+}
+
+@keyframes fadeOutZoom {
+  0% { opacity: 0; transform: scale(0.5); letter-spacing: 0px; }
+  15% { opacity: 1; transform: scale(1.1); letter-spacing: 15px; }
+  30% { opacity: 1; transform: scale(1); letter-spacing: 12px; }
+  75% { opacity: 1; transform: scale(1); letter-spacing: 12px; }
+  100% { opacity: 0; transform: scale(1.5); letter-spacing: 20px; }
+}
+
+.dpad-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Show mobile controls only on small screens or touch devices */
+@media (max-width: 768px) {
+  #mobile-controls {
+    display: flex !important;
+  }
+}
