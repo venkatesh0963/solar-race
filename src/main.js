@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Game instance
   const game = new Game();
 
+  // Show mobile controls if on a touch device
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (isTouch) {
+    document.getElementById('mobile-controls').classList.remove('hidden');
+  }
+
   // Initial render (shows background before starting)
   game.renderer.render(game.scene, game.camera);
 
@@ -23,12 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
   startBtn.addEventListener('click', () => {
     startScreen.classList.add('hidden');
     hud.classList.remove('hidden');
+    if (isTouch) document.getElementById('mobile-controls').classList.remove('hidden');
     game.start();
   });
 
   restartBtn.addEventListener('click', () => {
     gameOverScreen.classList.add('hidden');
     hud.classList.remove('hidden');
+    if (isTouch) document.getElementById('mobile-controls').classList.remove('hidden');
     game.start();
   });
 
@@ -36,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (game.isRunning && !game.isPaused) {
       game.pause();
       hud.classList.add('hidden');
+      if (isTouch) document.getElementById('mobile-controls').classList.add('hidden');
       pauseScreen.classList.remove('hidden');
     }
   });
@@ -45,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
       game.resume();
       pauseScreen.classList.add('hidden');
       hud.classList.remove('hidden');
+      if (isTouch) document.getElementById('mobile-controls').classList.remove('hidden');
     }
   });
 
@@ -54,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Listen for Game Over event triggered by Game.js
   window.addEventListener('gameover', (e) => {
     hud.classList.add('hidden');
+    if (isTouch) document.getElementById('mobile-controls').classList.add('hidden');
     gameOverScreen.classList.remove('hidden');
     finalScoreText.innerText = e.detail.score;
   });

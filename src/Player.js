@@ -71,6 +71,24 @@ export default class Player {
     this.thrusterGlow.position.set(0, 0, 2.5);
     this.mesh.add(this.thrusterGlow);
 
+    // 7. Dynamic Lights
+    // Engine Point Light
+    const engineLight = new THREE.PointLight(0x00ffff, 50, 15);
+    engineLight.position.set(0, 0, 3.0);
+    this.mesh.add(engineLight);
+
+    // Headlight SpotLight
+    const headLight = new THREE.SpotLight(0xffffff, 200, 200, Math.PI / 5, 0.5, 1);
+    headLight.position.set(0, 0, -2.5);
+    
+    // The SpotLight needs a target to point at
+    this.headLightTarget = new THREE.Object3D();
+    this.headLightTarget.position.set(0, 0, -50);
+    this.mesh.add(this.headLightTarget);
+    headLight.target = this.headLightTarget;
+    
+    this.mesh.add(headLight);
+
     // Start position and Scale
     this.mesh.position.set(0, 0, 0);
     this.mesh.scale.set(0.4, 0.4, 0.4); // Scaled down size
