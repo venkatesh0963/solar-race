@@ -174,11 +174,11 @@ button:active {
 
 .dpad-btn {
   position: absolute;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(0, 255, 255, 0.5);
+  background: #333;
+  border: 2px solid #555;
   width: 60px;
   height: 60px;
-  border-radius: 12px;
+  border-radius: 8px;
   color: white;
   display: flex;
   justify-content: center;
@@ -186,11 +186,14 @@ button:active {
   touch-action: none;
   cursor: pointer;
   pointer-events: auto;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 0 #111, 0 5px 15px rgba(0,0,0,0.5);
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
 .dpad-btn:active {
-  background: rgba(0, 255, 255, 0.4);
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #111, 0 1px 5px rgba(0,0,0,0.5);
+  background: #444;
 }
 
 .dpad-up { top: 0; left: 50%; transform: translateX(-50%); }
@@ -234,125 +237,10 @@ button:active {
   100% { opacity: 0; transform: scale(1.5); letter-spacing: 20px; }
 }
 
-.dpad-btn:active {
-  background: rgba(255, 255, 255, 0.3);
-}
-
 /* Show mobile controls only on small screens or touch devices */
 @media (max-width: 768px) {
   #mobile-controls {
     display: flex !important;
   }
-}
-
-/* Cockpit Dashboard Aesthetics */
-#cockpit-dashboard {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 800px;
-  height: 120px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  pointer-events: none; /* Let clicks pass through to game/mobile controls */
-  perspective: 1000px;
-}
-
-.dash-panel {
-  background: linear-gradient(180deg, rgba(20,25,35,0.8) 0%, rgba(10,15,20,1) 100%);
-  border: 2px solid #2a3b4c;
-  box-shadow: 0 0 30px rgba(0,255,255,0.1) inset;
-  border-radius: 20px;
-  padding: 15px;
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  transform: rotateX(20deg);
-}
-
-.center-console {
-  width: 200px;
-  height: 100px;
-  border-top: 4px solid #00ffff;
-  box-shadow: 0 -10px 40px rgba(0,255,255,0.2) inset, 0 -2px 10px rgba(0,255,255,0.5);
-  flex-direction: column;
-  justify-content: center;
-}
-
-.glow-btn {
-  width: 25px;
-  height: 15px;
-  border-radius: 4px;
-  background: #333;
-  box-shadow: 0 0 10px rgba(0,0,0,0.8) inset;
-  border: 1px solid #111;
-}
-
-.glow-btn.red { background: #ff3333; box-shadow: 0 0 15px #ff3333, 0 0 5px #ff3333 inset; }
-.glow-btn.blue { background: #3333ff; box-shadow: 0 0 15px #3333ff, 0 0 5px #3333ff inset; animation: blink 2s infinite; }
-.glow-btn.cyan { background: #00ffff; box-shadow: 0 0 15px #00ffff, 0 0 5px #00ffff inset; }
-.glow-btn.green { background: #33ff33; box-shadow: 0 0 15px #33ff33, 0 0 5px #33ff33 inset; }
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-.radar-display {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,50,0,1) 0%, rgba(0,20,0,1) 100%);
-  border: 2px solid #00ff00;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 0 15px #00ff00;
-}
-
-.radar-sweep {
-  width: 50%;
-  height: 50%;
-  background: linear-gradient(45deg, rgba(0,255,0,0) 0%, rgba(0,255,0,0.8) 100%);
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform-origin: bottom left;
-  animation: sweep 2s linear infinite;
-}
-
-@keyframes sweep {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.speed-readout {
-  color: #00ffff;
-  font-family: monospace;
-  font-size: 14px;
-  font-weight: bold;
-  text-shadow: 0 0 5px #00ffff;
-  margin-top: 10px;
-}
-
-.throttle-slider {
-  width: 15px;
-  height: 60px;
-  background: #111;
-  border-radius: 10px;
-  position: relative;
-  border: 1px solid #333;
-}
-.throttle-handle {
-  width: 25px;
-  height: 10px;
-  background: #ccc;
-  position: absolute;
-  top: 10%;
-  left: -5px;
-  border-radius: 2px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.8);
 }
 
