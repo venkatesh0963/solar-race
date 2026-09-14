@@ -157,11 +157,11 @@ button:active {
 /* Mobile Controls (Inverted-T D-Pad) */
 #mobile-controls {
   position: absolute;
-  bottom: 60px;
+  bottom: 50px;
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
-  height: 130px;
+  width: 240px;
+  height: 150px;
   pointer-events: none;
   z-index: 10000;
 }
@@ -174,11 +174,11 @@ button:active {
 
 .dpad-btn {
   position: absolute;
-  background: rgba(15, 25, 35, 0.6);
-  border: 1px solid #0088ff; /* thin blue border */
+  background: rgba(10, 20, 30, 0.7);
+  border: 2px solid #00aaff;
   width: 60px;
   height: 60px;
-  border-radius: 12px;
+  border-radius: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
