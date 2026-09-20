@@ -233,7 +233,8 @@ export default class Game {
   tick(time) {
     if (!this.isRunning || this.isPaused) return;
     
-    const currentTime = time !== undefined ? time : performance.now();
+    // Ignore the engine's time parameter completely to guarantee no NaN values on weird mobile browsers
+    const currentTime = performance.now();
 
     // Calculate Delta Time safely
     const dt = Math.min((currentTime - this.lastTime) / 1000, 0.1);
