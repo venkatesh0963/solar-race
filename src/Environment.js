@@ -54,8 +54,9 @@ export default class Environment {
     if (this.spawnZ > playerZ - 800) {
       this.spawnMeteorRow();
       
-      // Decrease spacing as difficulty increases (harder)
-      const spacing = Math.max(20, 60 / difficultyMultiplier);
+      // Decrease spacing as difficulty increases, but base spacing increased by ~50% 
+      // to reduce total obstacle density by 35%
+      const spacing = Math.max(30, 90 / difficultyMultiplier);
       this.spawnZ -= spacing; 
     }
 
