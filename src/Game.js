@@ -94,6 +94,7 @@ export default class Game {
       depthWrite: false
     });
     this.starfield = new THREE.Points(starGeometry, starMaterial);
+    this.starfield.frustumCulled = false; // Prevents disappearing when moving far from origin
     this.scene.add(this.starfield);
 
     // Colorful Nebula Dust
@@ -134,6 +135,7 @@ export default class Game {
       depthWrite: false
     });
     this.nebula = new THREE.Points(dustGeo, dustMat);
+    this.nebula.frustumCulled = false; // Prevents disappearing
     this.scene.add(this.nebula);
 
     // Components
@@ -222,27 +224,26 @@ export default class Game {
     
     if (this.cameraMode === 3) {
       // Far 3rd Person (Default)
-      targetCamY += 7; // Raised camera higher
-      targetCamZ += 14;
+      targetCamY += 15; // Drone view (very high)
+      targetCamZ += 22; // Pulled back
       this.camera.position.x += (targetCamX - this.camera.position.x) * 5 * dt;
       this.camera.position.y += (targetCamY - this.camera.position.y) * 5 * dt;
       this.camera.position.z = targetCamZ;
       
-      // Look at a point BELOW the ship. 
-      // This tilts the camera down, shifting the ship HIGHER on the screen away from the UI buttons!
-      const lookTarget = new THREE.Vector3(targetCamX * 0.5, -2, targetCamZ - 100);
+      // Look sharply down ahead. This pushes the ship into the top 30% of the screen.
+      const lookTarget = new THREE.Vector3(targetCamX * 0.5, -15, targetCamZ - 100);
       this.camera.lookAt(lookTarget);
       
     } else if (this.cameraMode === 2) {
       // Close 3rd Person
-      targetCamY += 4;
-      targetCamZ += 8;
+      targetCamY += 8;
+      targetCamZ += 12;
       this.camera.position.x += (targetCamX - this.camera.position.x) * 10 * dt;
       this.camera.position.y += (targetCamY - this.camera.position.y) * 10 * dt;
       this.camera.position.z = targetCamZ;
       
-      // Look below ship to frame it higher
-      const lookTarget = new THREE.Vector3(targetCamX, -1, targetCamZ - 50);
+      // Look sharply down
+      const lookTarget = new THREE.Vector3(targetCamX, -8, targetCamZ - 50);
       this.camera.lookAt(lookTarget);
       
     } else if (this.cameraMode === 1) {
@@ -263,13 +264,18 @@ export default class Game {
     this.dirLight.target.position.set(0, 0, this.player.mesh.position.z);
     this.dirLight.target.updateMatrixWorld();
 
-    // 3b. Infinite Space (Wrap Background Particles)
+    // 3b. Infinite Space (Bidirectional Wrap Background Particles)
     const starPos = this.starfield.geometry.attributes.position.array;
     let starsNeedUpdate = false;
     for(let i=0; i<3000; i++) {
         // If a star falls behind the camera, wrap it far ahead
-        if(starPos[i*3+2] > this.camera.position.z + 100) {
+        if(starPos[i*3+2] > this.camera.position.z + 500) {
             starPos[i*3+2] -= 2000;
+            starsNeedUpdate = true;
+        } 
+        // If the camera resets to 0 (game over), pull stars back
+        else if (starPos[i*3+2] < this.camera.position.z - 1500) {
+            starPos[i*3+2] += 2000;
             starsNeedUpdate = true;
         }
     }
@@ -278,8 +284,12 @@ export default class Game {
     const dustPos = this.nebula.geometry.attributes.position.array;
     let dustNeedUpdate = false;
     for(let i=0; i<500; i++) {
-        if(dustPos[i*3+2] > this.camera.position.z + 200) {
+        if(dustPos[i*3+2] > this.camera.position.z + 500) {
             dustPos[i*3+2] -= 2000;
+            dustNeedUpdate = true;
+        }
+        else if (dustPos[i*3+2] < this.camera.position.z - 1500) {
+            dustPos[i*3+2] += 2000;
             dustNeedUpdate = true;
         }
     }
