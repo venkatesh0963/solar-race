@@ -2,7 +2,14 @@
 
 A high-speed, infinite 3D space survival game built from scratch using **Vanilla JavaScript**, **Three.js**, and **Vite**.
 
-Pilot a highly responsive starfighter through a pitch-black starry void. Your objective is simple: survive as long as possible while dodging incoming spinning meteors and collecting glowing cyan energy cores to keep your fuel from running out.
+---
+
+## 📖 About Velocity: Zero
+
+**Velocity: Zero** is a synthwave-inspired arcade space dodger. Pilot a highly responsive starfighter through a pitch-black starry void. Your objective is simple: survive as long as possible while dodging incoming spinning meteors and collecting glowing cyan energy cores to keep your engine running.
+
+**Developed by Playmotions**  
+📱 Follow us on Instagram: [@playmotions](https://instagram.com/playmotions)
 
 ---
 
