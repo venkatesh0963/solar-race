@@ -72,9 +72,9 @@ body {
   top: 0;
   left: 0;
   transform: none;
-  width: 100vw;
-  height: 100vh;
-  max-width: 100vw;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
   background: #f4f1ea; /* Vintage paper color */
   color: #1a1a2e; /* Dark ink */
   border-radius: 0;
@@ -92,6 +92,7 @@ body {
   justify-content: center;
   align-items: center;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .poster-inner {
