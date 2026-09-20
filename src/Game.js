@@ -191,10 +191,13 @@ export default class Game {
     this.solarEnergy = 100;
     this.difficultyMultiplier = 1.0;
     
-    // Reset Lives
+    // Reset Lives & Powerups
     this.lives = 3;
     this.isInvincible = false;
+    this.isMagnetActive = false;
+    if (this.player.magnetAura) this.player.magnetAura.visible = false;
     this.player.mesh.visible = true;
+    
     if (this.hearts) {
       this.hearts.forEach(h => {
         if (h) {
@@ -326,8 +329,8 @@ export default class Game {
     }
     if(dustNeedUpdate) this.nebula.geometry.attributes.position.needsUpdate = true;
 
-    // 4. Update Environment (pass dt and difficulty)
-    this.environment.update(dt, this.player.mesh.position.z, this.difficultyMultiplier);
+    // 4. Update Environment (pass magnet state)
+    this.environment.update(dt, this.player.mesh.position.z, this.difficultyMultiplier, this.isMagnetActive, this.player.mesh.position);
 
     // 5. Update Invincibility
     if (this.isInvincible) {
@@ -339,8 +342,30 @@ export default class Game {
         this.player.mesh.visible = true; // Ensure it's visible when invincibility ends
       }
     }
+    
+    // 5a. Update Magnet Powerup
+    if (this.isMagnetActive) {
+       this.magnetTimer -= dt;
+       if (this.magnetTimer <= 0) {
+           this.isMagnetActive = false;
+           if (this.player.magnetAura) this.player.magnetAura.visible = false;
+       } else {
+           if (this.player.magnetAura) {
+               this.player.magnetAura.visible = true;
+               this.player.magnetAura.rotation.z += dt * 5;
+           }
+       }
+    }
 
-    // 5a. Update Explosions
+    // 5b. Check Magnet Collisions
+    const magnetsCollected = this.environment.checkMagnetCollisions(this.player.boundingBox);
+    if (magnetsCollected > 0) {
+       this.isMagnetActive = true;
+       this.magnetTimer = 10.0; // 10 seconds of magnetic pull!
+       this.score += 1000;
+    }
+
+    // 5c. Update Explosions
     if (this.explosions) {
       for (let i = this.explosions.length - 1; i >= 0; i--) {
         const exp = this.explosions[i];
@@ -373,7 +398,7 @@ export default class Game {
       }
     }
 
-    // 5b. Check Meteor Collisions
+    // 5d. Check Meteor Collisions
     if (this.environment.checkCollisions(this.player.boundingBox)) {
       if (!this.isInvincible) {
         this.lives--;

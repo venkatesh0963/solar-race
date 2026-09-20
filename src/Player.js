@@ -104,6 +104,21 @@ export default class Player {
     // Collision Box
     this.boundingBox = new THREE.Box3();
     
+    // Magnet Aura (Hidden by default, shown when powerup is active)
+    const auraGeo = new THREE.TorusGeometry(3.5, 0.3, 8, 32);
+    const auraMat = new THREE.MeshBasicMaterial({ 
+        color: 0xaa00ff, // Purple 
+        transparent: true, 
+        opacity: 0.8, 
+        blending: THREE.AdditiveBlending 
+    });
+    this.magnetAura = new THREE.Mesh(auraGeo, auraMat);
+    this.magnetAura.rotation.x = Math.PI / 2;
+    this.magnetAura.visible = false;
+    this.mesh.add(this.magnetAura);
+
+    this.update(0, 0, 0, 1.0);
+    
     // Physics
     this.forwardSpeed = 100;
     this.lateralSpeed = 45;

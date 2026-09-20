@@ -7,6 +7,7 @@ export default class Environment {
     this.obstacles = []; // Meteors
     this.coins = []; // Fuel coins
     this.planets = []; // Static background planets
+    this.magnets = []; // Magnet powerups
     
     // Materials
     this.matMeteor = new THREE.MeshStandardMaterial({ 
@@ -19,19 +20,38 @@ export default class Environment {
     });
     
     // Meteor Shapes
-    this.geoMeteorBase = new THREE.DodecahedronGeometry(4, 1);
-    this.geoLavaCore = new THREE.IcosahedronGeometry(3.7, 1); // Pokes through to create cracks
+    this.geoMeteorBase = new THREE.DodecahedronGeometry(8, 0);
+    this.geoLavaCore = new THREE.IcosahedronGeometry(7.5, 0); // Pokes through to create cracks
 
     // Fuel Coin Shape (Glowing cyan diamond)
-    this.geoCoin = new THREE.OctahedronGeometry(1.5, 0);
+    this.geoCoin = new THREE.SphereGeometry(1.5, 16, 16);
     this.matCoin = new THREE.MeshBasicMaterial({ color: 0x00ffff }); // glowing cyan
     
     // Spawn tracking
     this.spawnZ = -100;
-    this.despawnDistance = 50;
+    this.despawnDistance = 200;
     
     // Create Starfield
     this.createStarfield();
+  }
+
+  reset() {
+    for (let obs of this.obstacles) this.scene.remove(obs.mesh);
+    for (let coin of this.coins) this.scene.remove(coin.mesh);
+    for (let planet of this.planets) this.scene.remove(planet);
+    for (let mag of this.magnets) this.scene.remove(mag.mesh);
+    
+    this.obstacles = [];
+    this.coins = [];
+    this.planets = [];
+    this.magnets = [];
+    this.spawnZ = -100;
+    
+    // Initial spawn
+    for (let i = 0; i < 5; i++) {
+      this.spawnMeteorRow();
+      this.spawnZ -= 60;
+    }
   }
 
   createStarfield() {
@@ -84,11 +104,32 @@ export default class Environment {
       // Spin animation
       coin.mesh.rotation.y += 2 * dt;
       coin.mesh.rotation.z += 1 * dt;
+      
+      // Magnetic Pull Logic
+      if (isMagnetActive && playerPosition) {
+        const dist = coin.mesh.position.distanceTo(playerPosition);
+        if (dist < 150 && dist > 2) {
+          const dir = new THREE.Vector3().subVectors(playerPosition, coin.mesh.position).normalize();
+          coin.mesh.position.add(dir.multiplyScalar(200 * dt)); // Fast pull
+        }
+      }
 
       if (coin.mesh.position.z > playerZ + this.despawnDistance) {
         this.scene.remove(coin.mesh);
         this.coins.splice(i, 1);
       }
+    }
+    
+    // Update and clean up Magnets
+    for (let i = this.magnets.length - 1; i >= 0; i--) {
+        const mag = this.magnets[i];
+        // Bobbing animation
+        mag.mesh.position.y += Math.sin(Date.now() * 0.005) * 0.05;
+        
+        if (mag.mesh.position.z > playerZ + this.despawnDistance) {
+            this.scene.remove(mag.mesh);
+            this.magnets.splice(i, 1);
+        }
     }
     
     // Clean up background planets
@@ -186,6 +227,38 @@ export default class Environment {
         });
       }
     }
+    
+    // 3. Spawn Magnet Powerup
+    if (Math.random() < 0.05) { // 5% chance
+       this.spawnMagnet();
+    }
+  }
+
+  spawnMagnet() {
+    const group = new THREE.Group();
+    const geo = new THREE.SphereGeometry(2, 16, 16);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xaa00ff }); // Purple core
+    const core = new THREE.Mesh(geo, mat);
+    
+    const glowGeo = new THREE.SphereGeometry(3.5, 16, 16);
+    const glowMat = new THREE.MeshBasicMaterial({ 
+        color: 0xaa00ff, 
+        transparent: true, 
+        opacity: 0.4, 
+        blending: THREE.AdditiveBlending 
+    });
+    const glow = new THREE.Mesh(glowGeo, glowMat);
+    
+    group.add(core);
+    group.add(glow);
+    
+    group.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 20, this.spawnZ - 50);
+    this.scene.add(group);
+    
+    this.magnets.push({ 
+        mesh: group, 
+        box: new THREE.Box3().setFromObject(group) 
+    });
   }
 
   spawnPlanet() {
@@ -251,22 +324,30 @@ export default class Environment {
   }
 
   checkCoinCollisions(playerBox) {
-    let coinsCollected = 0;
+    let collected = 0;
     for (let i = this.coins.length - 1; i >= 0; i--) {
-      const coin = this.coins[i];
-      coin.box.setFromObject(coin.mesh);
-      
-      // Generous hitbox for collecting coins
-      coin.box.expandByVector(new THREE.Vector3(2, 2, 2));
-
-      if (playerBox.intersectsBox(coin.box)) {
-        // Collect coin
-        this.scene.remove(coin.mesh);
+      this.coins[i].box.setFromObject(this.coins[i].mesh);
+      if (playerBox.intersectsBox(this.coins[i].box)) {
+        // Collect!
+        this.scene.remove(this.coins[i].mesh);
         this.coins.splice(i, 1);
-        coinsCollected++;
+        collected++;
       }
     }
-    return coinsCollected;
+    return collected;
+  }
+  
+  checkMagnetCollisions(playerBox) {
+    let collected = 0;
+    for (let i = this.magnets.length - 1; i >= 0; i--) {
+      this.magnets[i].box.setFromObject(this.magnets[i].mesh);
+      if (playerBox.intersectsBox(this.magnets[i].box)) {
+        this.scene.remove(this.magnets[i].mesh);
+        this.magnets.splice(i, 1);
+        collected++;
+      }
+    }
+    return collected;
   }
 
   reset() {
