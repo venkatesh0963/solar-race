@@ -69,7 +69,7 @@ export default class Environment {
     this.scene.add(stars);
   }
 
-  update(dt, playerZ, difficultyMultiplier = 1.0, isMagnetActive = false, playerPosition = null) {
+  update(dt, playerZ, difficultyMultiplier = 1.0) {
     // Spawn new meteors ahead
     if (this.spawnZ > playerZ - 800) {
       this.spawnMeteorRow();
@@ -105,31 +105,10 @@ export default class Environment {
       coin.mesh.rotation.y += 2 * dt;
       coin.mesh.rotation.z += 1 * dt;
       
-      // Magnetic Pull Logic
-      if (isMagnetActive && playerPosition) {
-        const dist = coin.mesh.position.distanceTo(playerPosition);
-        if (dist < 150 && dist > 2) {
-          const dir = new THREE.Vector3().subVectors(playerPosition, coin.mesh.position).normalize();
-          coin.mesh.position.add(dir.multiplyScalar(200 * dt)); // Fast pull
-        }
-      }
-
       if (coin.mesh.position.z > playerZ + this.despawnDistance) {
         this.scene.remove(coin.mesh);
         this.coins.splice(i, 1);
       }
-    }
-    
-    // Update and clean up Magnets
-    for (let i = this.magnets.length - 1; i >= 0; i--) {
-        const mag = this.magnets[i];
-        // Bobbing animation
-        mag.mesh.position.y += Math.sin(Date.now() * 0.005) * 0.05;
-        
-        if (mag.mesh.position.z > playerZ + this.despawnDistance) {
-            this.scene.remove(mag.mesh);
-            this.magnets.splice(i, 1);
-        }
     }
     
     // Clean up background planets
@@ -149,28 +128,15 @@ export default class Environment {
     for (let i = 0; i < numObstacles; i++) {
       const meteorGroup = new THREE.Group();
       
-      // Randomly pick vibrant colors for rocks and lava
-      const rockColors = [0x111111, 0x1a0b2e, 0x0a1a1a, 0x2e0b1a]; // Black, dark purple, dark teal, dark maroon
-      const lavaColors = [0xff3300, 0xff0066, 0x00ff88, 0xffcc00, 0x9900ff]; // Orange, pink, mint, gold, bright purple
-      
+      // Simple dark rock colors
+      const rockColors = [0x111111, 0x222222, 0x1a1a1a]; 
       const rColor = rockColors[Math.floor(Math.random() * rockColors.length)];
-      const lColor = lavaColors[Math.floor(Math.random() * lavaColors.length)];
       
       const rockMat = new THREE.MeshStandardMaterial({ color: rColor, roughness: 1.0, flatShading: true });
-      const lavaMat = new THREE.MeshBasicMaterial({ color: lColor });
-      
       const rockMesh = new THREE.Mesh(this.geoMeteorBase, rockMat);
       rockMesh.castShadow = true;
       rockMesh.receiveShadow = true;
       meteorGroup.add(rockMesh);
-      
-      // Randomly decide if this meteor is a "hot" lava meteor (70% chance now for more color)
-      if (Math.random() > 0.3) {
-        const lavaMesh = new THREE.Mesh(this.geoLavaCore, lavaMat);
-        // Randomly rotate lava core so it pokes through different parts of the rock
-        lavaMesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-        meteorGroup.add(lavaMesh);
-      }
       
       // Random position across a wider space track
       const xPos = (Math.random() - 0.5) * 50;
@@ -182,8 +148,8 @@ export default class Environment {
       // Random rotation
       meteorGroup.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
       
-      // Random size variation
-      const scale = 0.5 + Math.random() * 1.5;
+      // Reduce overall size of obstacles
+      const scale = 0.4 + Math.random() * 0.6; // Much smaller
       meteorGroup.scale.set(scale, scale, scale);
       
       this.scene.add(meteorGroup);
@@ -191,7 +157,7 @@ export default class Environment {
       this.obstacles.push({
         mesh: meteorGroup,
         box: new THREE.Box3().setFromObject(meteorGroup),
-        moveSpeedZ: 50 + Math.random() * 50, // They move towards the player at speed 50-100!
+        moveSpeedZ: 50 + Math.random() * 50,
         spinSpeed: {
             x: (Math.random() - 0.5) * 2,
             y: (Math.random() - 0.5) * 2,
@@ -211,10 +177,7 @@ export default class Environment {
       const startX = (Math.random() - 0.5) * 40;
       const startY = (Math.random() - 0.5) * 20;
       
-      // Colorful coins
-      const coinColors = [0x00ffff, 0xff00ff, 0xffff00, 0x00ff00];
-      const cColor = coinColors[Math.floor(Math.random() * coinColors.length)];
-      const coinMat = new THREE.MeshBasicMaterial({ color: cColor });
+      const coinMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
       
       for(let i=0; i < numCoins; i++) {
         const mesh = new THREE.Mesh(this.geoCoin, coinMat);
@@ -222,43 +185,11 @@ export default class Environment {
         this.scene.add(mesh);
         
         this.coins.push({
-          mesh: mesh,
-          box: new THREE.Box3().setFromObject(mesh)
+           mesh: mesh,
+           box: new THREE.Box3().setFromObject(mesh)
         });
       }
     }
-    
-    // 3. Spawn Magnet Powerup
-    if (Math.random() < 0.05) { // 5% chance
-       this.spawnMagnet();
-    }
-  }
-
-  spawnMagnet() {
-    const group = new THREE.Group();
-    const geo = new THREE.SphereGeometry(2, 16, 16);
-    const mat = new THREE.MeshBasicMaterial({ color: 0xaa00ff }); // Purple core
-    const core = new THREE.Mesh(geo, mat);
-    
-    const glowGeo = new THREE.SphereGeometry(3.5, 16, 16);
-    const glowMat = new THREE.MeshBasicMaterial({ 
-        color: 0xaa00ff, 
-        transparent: true, 
-        opacity: 0.4, 
-        blending: THREE.AdditiveBlending 
-    });
-    const glow = new THREE.Mesh(glowGeo, glowMat);
-    
-    group.add(core);
-    group.add(glow);
-    
-    group.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 20, this.spawnZ - 50);
-    this.scene.add(group);
-    
-    this.magnets.push({ 
-        mesh: group, 
-        box: new THREE.Box3().setFromObject(group) 
-    });
   }
 
   spawnPlanet() {
