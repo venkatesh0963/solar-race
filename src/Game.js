@@ -283,6 +283,13 @@ export default class Game {
       // Because we copied rotation, the camera looks forward down -Z automatically!
     }
 
+    // Camera Shake on Hit (First 0.5 seconds of invincibility)
+    if (this.isInvincible && this.invincibleTimer > 1.5) {
+      const shakeIntensity = (this.invincibleTimer - 1.5) * 4.0; // Scales from 2.0 down to 0.0
+      this.camera.position.x += (Math.random() - 0.5) * shakeIntensity;
+      this.camera.position.y += (Math.random() - 0.5) * shakeIntensity;
+    }
+
     // Update Sun shadow camera to follow player so shadows always render
     this.dirLight.position.z = this.player.mesh.position.z - 500;
     this.dirLight.target.position.set(0, 0, this.player.mesh.position.z);
@@ -333,10 +340,46 @@ export default class Game {
       }
     }
 
+    // 5a. Update Explosions
+    if (this.explosions) {
+      for (let i = this.explosions.length - 1; i >= 0; i--) {
+        const exp = this.explosions[i];
+        exp.life -= dt;
+        
+        if (exp.life <= 0) {
+          this.scene.remove(exp.mesh);
+          exp.mesh.geometry.dispose();
+          exp.mesh.material.dispose();
+          this.explosions.splice(i, 1);
+          continue;
+        }
+        
+        // Update particle positions based on velocity
+        const positions = exp.mesh.geometry.attributes.position.array;
+        for (let j = 0; j < exp.velocities.length; j++) {
+          positions[j * 3] += exp.velocities[j].x * dt;
+          positions[j * 3 + 1] += exp.velocities[j].y * dt;
+          positions[j * 3 + 2] += exp.velocities[j].z * dt;
+          
+          // Add some drag to slow particles down smoothly
+          exp.velocities[j].x *= 0.95;
+          exp.velocities[j].y *= 0.95;
+          exp.velocities[j].z *= 0.95;
+        }
+        exp.mesh.geometry.attributes.position.needsUpdate = true;
+        
+        // Fade out
+        exp.mesh.material.opacity = exp.life;
+      }
+    }
+
     // 5b. Check Meteor Collisions
     if (this.environment.checkCollisions(this.player.boundingBox)) {
       if (!this.isInvincible) {
         this.lives--;
+        
+        // Trigger Massive Explosion
+        this.createExplosion(this.player.mesh.position);
         
         // Update Heart UI
         if (this.hearts && this.hearts[this.lives]) {
@@ -395,7 +438,70 @@ export default class Game {
 
   triggerGameOver() {
     this.stop();
+    // Fire one last explosion when you die completely!
+    this.createExplosion(this.player.mesh.position);
     window.dispatchEvent(new CustomEvent('gameover', { detail: { score: Math.floor(this.score) } }));
+  }
+
+  createExplosion(position) {
+    const particleCount = 150; // Huge burst
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const velocities = [];
+    
+    const colorPalette = [
+      new THREE.Color(0xff2200), // Red
+      new THREE.Color(0xff8800), // Orange
+      new THREE.Color(0xffff00)  // Yellow
+    ];
+
+    for (let i = 0; i < particleCount; i++) {
+      // Start exactly at the player's ship
+      positions[i * 3] = position.x;
+      positions[i * 3 + 1] = position.y;
+      positions[i * 3 + 2] = position.z;
+      
+      // Random spherical velocity
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos((Math.random() * 2) - 1);
+      const speed = 30 + Math.random() * 50; // Extremely fast initial burst
+      
+      velocities.push({
+        x: Math.sin(phi) * Math.cos(theta) * speed,
+        y: Math.sin(phi) * Math.sin(theta) * speed,
+        z: Math.cos(phi) * speed
+      });
+      
+      const c = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+      colors[i * 3] = c.r;
+      colors[i * 3 + 1] = c.g;
+      colors[i * 3 + 2] = c.b;
+    }
+    
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    // Using a simple square point since it's an explosion spark, 
+    // additive blending will make it look like a glowing beam of light
+    const material = new THREE.PointsMaterial({
+      size: 2.0,
+      vertexColors: true,
+      transparent: true,
+      opacity: 1.0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    
+    const points = new THREE.Points(geometry, material);
+    this.scene.add(points);
+    
+    if (!this.explosions) this.explosions = [];
+    this.explosions.push({
+      mesh: points,
+      velocities: velocities,
+      life: 1.2 // 1.2 seconds before disappearing
+    });
   }
 
   onWindowResize() {
