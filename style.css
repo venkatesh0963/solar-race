@@ -65,6 +65,8 @@ body {
   text-align: center;
   z-index: 100;
   pointer-events: auto;
+}
+
 /* NEWSPAPER DOSSIER (BROADSHEET STYLE) */
 .newspaper-panel {
   position: absolute;
