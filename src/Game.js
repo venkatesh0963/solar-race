@@ -17,6 +17,17 @@ export default class Game {
     this.score = 0;
     this.solarEnergy = 100;
     this.difficultyMultiplier = 1.0;
+    
+    // New Life System
+    this.lives = 3;
+    this.isInvincible = false;
+    this.invincibleTimer = 0;
+    this.hearts = [
+      document.getElementById('life-1'),
+      document.getElementById('life-2'),
+      document.getElementById('life-3')
+    ];
+    
     this.clock = new THREE.Clock();
 
     // Scene Setup (Space Theme)
@@ -180,6 +191,19 @@ export default class Game {
     this.solarEnergy = 100;
     this.difficultyMultiplier = 1.0;
     
+    // Reset Lives
+    this.lives = 3;
+    this.isInvincible = false;
+    this.player.mesh.visible = true;
+    if (this.hearts) {
+      this.hearts.forEach(h => {
+        if (h) {
+          h.style.opacity = '1.0';
+          h.style.filter = 'none';
+        }
+      });
+    }
+    
     this.player.reset();
     this.environment.reset();
     
@@ -298,10 +322,37 @@ export default class Game {
     // 4. Update Environment (pass dt and difficulty)
     this.environment.update(dt, this.player.mesh.position.z, this.difficultyMultiplier);
 
-    // 5. Check Collisions
+    // 5. Update Invincibility
+    if (this.isInvincible) {
+      this.invincibleTimer -= dt;
+      // Blink the ship rapidly (every 0.1s)
+      this.player.mesh.visible = Math.floor(time / 100) % 2 === 0;
+      if (this.invincibleTimer <= 0) {
+        this.isInvincible = false;
+        this.player.mesh.visible = true; // Ensure it's visible when invincibility ends
+      }
+    }
+
+    // 5b. Check Meteor Collisions
     if (this.environment.checkCollisions(this.player.boundingBox)) {
-      this.triggerGameOver();
-      return;
+      if (!this.isInvincible) {
+        this.lives--;
+        
+        // Update Heart UI
+        if (this.hearts && this.hearts[this.lives]) {
+          this.hearts[this.lives].style.opacity = '0.2'; // Gray out the lost heart
+          this.hearts[this.lives].style.filter = 'grayscale(100%)';
+        }
+        
+        if (this.lives <= 0) {
+          this.triggerGameOver();
+          return;
+        } else {
+          // Take damage, become invincible briefly
+          this.isInvincible = true;
+          this.invincibleTimer = 2.0; // 2 seconds of I-frames
+        }
+      }
     }
 
     // 5b. Check Coin Collisions
