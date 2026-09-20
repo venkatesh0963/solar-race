@@ -84,6 +84,7 @@ body {
   overflow-x: hidden;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  pointer-events: auto;
 }
 .newspaper-panel::-webkit-scrollbar { display: none; }
 
