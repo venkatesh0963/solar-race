@@ -222,24 +222,27 @@ export default class Game {
     
     if (this.cameraMode === 3) {
       // Far 3rd Person (Default)
-      targetCamY += 5;
-      targetCamZ += 12;
+      targetCamY += 7; // Raised camera higher
+      targetCamZ += 14;
       this.camera.position.x += (targetCamX - this.camera.position.x) * 5 * dt;
       this.camera.position.y += (targetCamY - this.camera.position.y) * 5 * dt;
       this.camera.position.z = targetCamZ;
       
-      const lookTarget = new THREE.Vector3(targetCamX * 0.5, targetCamY * 0.5, targetCamZ - 100);
+      // Look at a point BELOW the ship. 
+      // This tilts the camera down, shifting the ship HIGHER on the screen away from the UI buttons!
+      const lookTarget = new THREE.Vector3(targetCamX * 0.5, -2, targetCamZ - 100);
       this.camera.lookAt(lookTarget);
       
     } else if (this.cameraMode === 2) {
       // Close 3rd Person
-      targetCamY += 2.5;
-      targetCamZ += 6;
+      targetCamY += 4;
+      targetCamZ += 8;
       this.camera.position.x += (targetCamX - this.camera.position.x) * 10 * dt;
       this.camera.position.y += (targetCamY - this.camera.position.y) * 10 * dt;
       this.camera.position.z = targetCamZ;
       
-      const lookTarget = new THREE.Vector3(targetCamX, targetCamY, targetCamZ - 50);
+      // Look below ship to frame it higher
+      const lookTarget = new THREE.Vector3(targetCamX, -1, targetCamZ - 50);
       this.camera.lookAt(lookTarget);
       
     } else if (this.cameraMode === 1) {
