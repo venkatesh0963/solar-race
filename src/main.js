@@ -52,6 +52,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Main Menu Buttons
+  const mainMenuBtns = document.querySelectorAll('.main-menu-btn');
+  mainMenuBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      game.stop();
+      pauseScreen.classList.add('hidden');
+      gameOverScreen.classList.add('hidden');
+      hud.classList.add('hidden');
+      document.getElementById('mobile-controls').classList.add('hidden');
+      startScreen.classList.remove('hidden');
+    });
+  });
+
   const zoneAnnouncer = document.getElementById('zone-announcer');
   const zoneText = document.getElementById('zone-text');
 
