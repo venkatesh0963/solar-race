@@ -107,14 +107,24 @@ export default class Environment {
     for (let i = 0; i < numObstacles; i++) {
       const meteorGroup = new THREE.Group();
       
-      const rockMesh = new THREE.Mesh(this.geoMeteorBase, this.matMeteor);
+      // Randomly pick vibrant colors for rocks and lava
+      const rockColors = [0x111111, 0x1a0b2e, 0x0a1a1a, 0x2e0b1a]; // Black, dark purple, dark teal, dark maroon
+      const lavaColors = [0xff3300, 0xff0066, 0x00ff88, 0xffcc00, 0x9900ff]; // Orange, pink, mint, gold, bright purple
+      
+      const rColor = rockColors[Math.floor(Math.random() * rockColors.length)];
+      const lColor = lavaColors[Math.floor(Math.random() * lavaColors.length)];
+      
+      const rockMat = new THREE.MeshStandardMaterial({ color: rColor, roughness: 1.0, flatShading: true });
+      const lavaMat = new THREE.MeshBasicMaterial({ color: lColor });
+      
+      const rockMesh = new THREE.Mesh(this.geoMeteorBase, rockMat);
       rockMesh.castShadow = true;
       rockMesh.receiveShadow = true;
       meteorGroup.add(rockMesh);
       
-      // Randomly decide if this meteor is a "hot" lava meteor (50% chance)
-      if (Math.random() > 0.5) {
-        const lavaMesh = new THREE.Mesh(this.geoLavaCore, this.matLava);
+      // Randomly decide if this meteor is a "hot" lava meteor (70% chance now for more color)
+      if (Math.random() > 0.3) {
+        const lavaMesh = new THREE.Mesh(this.geoLavaCore, lavaMat);
         // Randomly rotate lava core so it pokes through different parts of the rock
         lavaMesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
         meteorGroup.add(lavaMesh);
@@ -153,12 +163,27 @@ export default class Environment {
         this.spawnPlanet();
     }
 
-    // Spawn a coin sometimes
-    if (Math.random() < 0.2) {
-      const coinMesh = this.createCoinMesh();
-      coinMesh.position.set((Math.random() - 0.5) * 40, (Math.random() - 0.5) * 20, this.spawnZ);
-      this.scene.add(coinMesh);
-      this.coins.push({ mesh: coinMesh, box: new THREE.Box3() });
+    // 2. Spawn Fuel Coins
+    if (Math.random() > 0.5) { // 50% chance to spawn a coin cluster
+      const numCoins = Math.floor(Math.random() * 3) + 1;
+      const startX = (Math.random() - 0.5) * 40;
+      const startY = (Math.random() - 0.5) * 20;
+      
+      // Colorful coins
+      const coinColors = [0x00ffff, 0xff00ff, 0xffff00, 0x00ff00];
+      const cColor = coinColors[Math.floor(Math.random() * coinColors.length)];
+      const coinMat = new THREE.MeshBasicMaterial({ color: cColor });
+      
+      for(let i=0; i < numCoins; i++) {
+        const mesh = new THREE.Mesh(this.geoCoin, coinMat);
+        mesh.position.set(startX, startY, this.spawnZ - (i * 10)); // Line them up
+        this.scene.add(mesh);
+        
+        this.coins.push({
+          mesh: mesh,
+          box: new THREE.Box3().setFromObject(mesh)
+        });
+      }
     }
   }
 

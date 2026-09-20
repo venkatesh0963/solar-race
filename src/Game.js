@@ -48,11 +48,11 @@ export default class Game {
     this.composer.addPass(renderScene);
     this.composer.addPass(bloomPass);
 
-    // Lighting
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.2); // Low ambient for space
+    // Lighting (Colorful Ambient)
+    this.ambientLight = new THREE.AmbientLight(0x442266, 1.5); // Rich purple ambient
     this.scene.add(this.ambientLight);
     
-    this.dirLight = new THREE.DirectionalLight(0xffffff, 2.0); // Bright star light
+    this.dirLight = new THREE.DirectionalLight(0xffddaa, 1.5); // Warm starlight
     this.dirLight.position.set(200, 300, -500); 
     this.dirLight.castShadow = true;
     this.dirLight.shadow.camera.top = 200;
@@ -80,6 +80,45 @@ export default class Game {
     });
     this.starfield = new THREE.Points(starGeometry, starMaterial);
     this.scene.add(this.starfield);
+
+    // Colorful Nebula Dust
+    const dustGeo = new THREE.BufferGeometry();
+    const dustCount = 500;
+    const dustPos = new Float32Array(dustCount * 3);
+    const dustColors = new Float32Array(dustCount * 3);
+    
+    const colorPalette = [
+      new THREE.Color(0xff0066), // Hot Pink
+      new THREE.Color(0x00ffff), // Cyan
+      new THREE.Color(0xffaa00), // Gold
+      new THREE.Color(0x7700ff), // Purple
+      new THREE.Color(0x00ff88)  // Mint Green
+    ];
+
+    for(let i = 0; i < dustCount; i++) {
+      dustPos[i*3] = (Math.random() - 0.5) * 1500;
+      dustPos[i*3+1] = (Math.random() - 0.5) * 1500;
+      dustPos[i*3+2] = (Math.random() - 0.5) * 1500;
+      
+      const c = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+      dustColors[i*3] = c.r;
+      dustColors[i*3+1] = c.g;
+      dustColors[i*3+2] = c.b;
+    }
+    
+    dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+    dustGeo.setAttribute('color', new THREE.BufferAttribute(dustColors, 3));
+    
+    const dustMat = new THREE.PointsMaterial({
+      size: 60, // Massive soft particles
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.4,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    this.nebula = new THREE.Points(dustGeo, dustMat);
+    this.scene.add(this.nebula);
 
     // Components
     this.player = new Player(this.scene);
