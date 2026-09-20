@@ -232,9 +232,12 @@ export default class Game {
 
   tick(time) {
     if (!this.isRunning || this.isPaused) return;
+    
+    const currentTime = time !== undefined ? time : performance.now();
 
-    const dt = Math.min((time - this.lastTime) / 1000, 0.1);
-    this.lastTime = time;
+    // Calculate Delta Time safely
+    const dt = Math.min((currentTime - this.lastTime) / 1000, 0.1);
+    this.lastTime = currentTime;
 
     // Increase difficulty over time
     this.difficultyMultiplier += dt * 0.005;
