@@ -465,6 +465,10 @@ export default class Game {
     this.stop();
     // Fire one last explosion when you die completely!
     this.createExplosion(this.player.mesh.position);
+    
+    // Force one final render frame so the explosion actually draws on the screen!
+    this.composer.render();
+    
     window.dispatchEvent(new CustomEvent('gameover', { detail: { score: Math.floor(this.score) } }));
   }
 
