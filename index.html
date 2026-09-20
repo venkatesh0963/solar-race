@@ -13,31 +13,93 @@
     <!-- UI Overlay -->
     <div id="ui-layer">
       <!-- Start Screen (Space Centre Poster) -->
-    <div id="start-screen" class="panel poster-panel">
-      <div class="poster-inner">
-        <div class="poster-header">
-          UNITED EARTH SPACE COMMAND<br>
-          DEPARTMENT OF EXPERIMENTAL FLIGHT<br>
-          DOCUMENT REF: VR-774A
+    <div id="start-screen" class="newspaper-panel">
+      <!-- Header -->
+      <header class="news-header">
+        <div class="news-meta">
+          <span>VOL. 01 NO. 001</span>
+          <span>THE ORBITAL EDITION</span>
+          <span>PRICE 20¢</span>
         </div>
-        
-        <h1 class="poster-title">VOID RUNNER</h1>
-        
-        <div class="poster-content">
-          <h3>MISSION OBJECTIVE:</h3>
-          <p>Pilot the experimental prototype vessel through the dense asteroid field in Sector 4. Collect scattered solar energy cells to maintain warp speed.</p>
-          
-          <h3>PILOT INSTRUCTIONS:</h3>
-          <ul>
-            <li><b>DESKTOP:</b> Use W/A/S/D or Arrow Keys to steer.</li>
-            <li><b>MOBILE:</b> Use the touchscreen directional pad.</li>
-            <li><b>CAMERA:</b> Press 'C' or the top-right button to switch views.</li>
-          </ul>
-          
-          <p class="warning-text">WARNING: Hull integrity is fragile. Avoid high-velocity impacts with celestial bodies.</p>
+        <h1 class="news-title">THE DAILY VOID</h1>
+        <div class="news-meta-bottom">
+          <span>UNITED EARTH SPACE COMMAND</span>
+          <span>MONDAY, 0600 HOURS</span>
+          <span>SECTOR 4 DEPLOYMENT</span>
         </div>
-
-        <button id="start-btn" class="poster-btn">INITIATE LAUNCH</button>
+      </header>
+    
+      <div class="news-grid">
+        <!-- Left Column -->
+        <div class="news-col main-col">
+          <h2 class="headline">YOU'VE GOT<br>METEORS TO<br>DODGE.</h2>
+          <p class="dropcap"><b>H</b>it the void before breakfast, navigate the asteroid field, and collect every solar cell where it belongs. Three lives to do it with.</p>
+          
+          <div class="stats-box">
+            <div class="stat-title">YOUR FIRST ASSIGNMENT<br><b>SECTOR 4 ASTEROID BELT</b><br>Dense cluster. Fly carefully.</div>
+            <div class="stat-numbers">
+              <div class="stat"><b>100</b><span>SPEED</span></div>
+              <div class="stat"><b>0</b><span>GRAVITY</span></div>
+              <div class="stat"><b>3</b><span>LIVES</span></div>
+            </div>
+          </div>
+          <button id="start-btn" class="news-btn">LAUNCH PROTOTYPE ⟶</button>
+        </div>
+    
+        <!-- Middle Column (Graphic) -->
+        <div class="news-col graphic-col">
+          <div class="news-graphic">
+            <pre class="ascii-ship">
+       /\
+      /  \
+     /____\
+    |      |
+   /|  ()  |\
+  / |      | \
+ /__|______|__\
+   /|      |\
+  /_|      |_\
+            </pre>
+            <p class="graphic-caption">EXPERIMENTAL PROTOTYPE VR-774A, AWAITING LAUNCH.</p>
+          </div>
+        </div>
+    
+        <!-- Right Column -->
+        <div class="news-col side-col">
+          <h3 class="section-title">HOW TO PLAY</h3>
+          <ol class="how-to-list">
+            <li><b>FIND THE ENERGY</b><br>Glowing solar cells power your warp drive. Collect them.</li>
+            <li><b>STAY ON THE MOVE</b><br>The ship flies itself. Steer left, right, up, down.</li>
+            <li><b>DODGE THE ROCKS</b><br>High-velocity impacts with celestial bodies will destroy the hull.</li>
+            <li><b>SURVIVE THE VOID</b><br>Speed increases as you travel deeper into the sector.</li>
+          </ol>
+        </div>
+      </div>
+    
+      <hr class="heavy-rule">
+      
+      <div class="news-grid-bottom">
+        <div class="news-col controls-section">
+          <h3 class="section-title">CONTROLS<br><span class="big-sub">KEEP FLYING.</span></h3>
+          <table class="controls-table">
+            <tr><td><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></td><td><b>Steer</b><br>Move across the void to line up solar cells.</td></tr>
+            <tr><td><kbd>C</kbd></td><td><b>Camera</b><br>Switch between nose-cam and chase-cam.</td></tr>
+            <tr><td>👆</td><td><b>On a Phone</b><br>Use the touchscreen D-Pad.</td></tr>
+          </table>
+        </div>
+        <div class="news-col danger-section">
+           <h3 class="section-title">WATCH OUT FOR...<br><span class="big-sub">THE VOID FIGHTS BACK.</span></h3>
+           <div class="danger-flex">
+             <div class="danger-item">
+               <b>METEOROIDS</b>
+               <p>They appear suddenly from the darkness. Steer clear or the run ends.</p>
+             </div>
+             <div class="danger-item">
+               <b>FUEL DRAIN</b>
+               <p>Your solar energy depletes continuously. Miss a cell, and you power down.</p>
+             </div>
+           </div>
+        </div>
       </div>
     </div>
 
