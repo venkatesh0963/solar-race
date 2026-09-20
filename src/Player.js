@@ -79,9 +79,16 @@ export default class Player {
     this.mesh.add(this.rightTrail);
 
     // 7. Dynamic Lights
-    // Front Lighting (to light up meteors)
-    const headLight = new THREE.PointLight(0x00ffff, 50, 100);
-    headLight.position.set(0, 0, -2);
+    // Headlight (Powerful SpotLight pointing forward into the void)
+    const headLight = new THREE.SpotLight(0xffffff, 400, 400, Math.PI / 6, 0.3, 1.5);
+    headLight.position.set(0, 0, -2.5);
+    
+    // The SpotLight needs a target to aim at
+    const headLightTarget = new THREE.Object3D();
+    headLightTarget.position.set(0, 0, -100); // Point far ahead
+    this.mesh.add(headLightTarget);
+    headLight.target = headLightTarget;
+    
     this.mesh.add(headLight);
 
     // Engine Point Light
