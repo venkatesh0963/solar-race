@@ -394,23 +394,49 @@ button:active {
 
 .dpad-btn {
   position: absolute;
-  background: rgba(10, 20, 30, 0.7);
-  border: 2px solid #00aaff;
   width: 60px;
   height: 60px;
+  background: rgba(0, 200, 255, 0.15); /* Transparent blue/cyan */
+  border: 2px solid rgba(0, 255, 255, 0.6); /* Thin cyan border */
   border-radius: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
-  touch-action: none;
-  cursor: pointer;
-  pointer-events: auto;
-  box-shadow: none;
-  transition: background 0.1s;
+  pointer-events: auto; /* Ensure touches work */
+  user-select: none;
+  touch-action: manipulation;
+  transition: all 0.1s;
 }
 
 .dpad-btn:active {
-  background: rgba(0, 170, 255, 0.4);
+  background: rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 15px rgba(0,255,255,0.8);
+}
+
+.dpad-btn svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* Shrink controls on short landscape screens */
+@media (max-height: 500px) {
+  #mobile-controls {
+    bottom: 10px;
+  }
+  .dpad-row {
+    gap: 15px;
+  }
+  .dpad-row:first-child {
+    margin-bottom: 5px;
+  }
+  .dpad-btn {
+    width: 45px;
+    height: 45px;
+  }
+  .dpad-btn svg {
+    width: 30px;
+    height: 30px;
+  }
 }
 
 .dpad-up { top: 0; left: 50%; transform: translateX(-50%); }
