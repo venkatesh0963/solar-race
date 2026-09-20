@@ -117,8 +117,6 @@ export default class Player {
     this.magnetAura.visible = false;
     this.mesh.add(this.magnetAura);
 
-    this.update(0, 0, 0, 1.0);
-    
     // Physics
     this.forwardSpeed = 100;
     this.lateralSpeed = 45;
@@ -128,6 +126,8 @@ export default class Player {
     this.trackWidth = 25; // Wider in space
     this.trackHeightMin = -15;
     this.trackHeightMax = 15;
+    
+    this.update(0, 0, 0, 1.0);
   }
 
   update(dt, inputAxis, verticalAxis, difficultyMultiplier = 1.0) {
