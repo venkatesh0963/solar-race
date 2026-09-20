@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import Player from './Player.js';
 import Environment from './Environment.js';
 import InputManager from './InputManager.js';
@@ -26,12 +29,24 @@ export default class Game {
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
     
     // Renderer Setup
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    this.renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // Set tone mapping for bloom
+    this.renderer.toneMapping = THREE.ReinhardToneMapping;
+    this.renderer.toneMappingExposure = 1.2;
     this.container.appendChild(this.renderer.domElement);
+
+    // Post-Processing Setup
+    const renderScene = new RenderPass(this.scene, this.camera);
+    // UnrealBloomPass(resolution, strength, radius, threshold)
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.0, 0.5, 0.1);
+    
+    this.composer = new EffectComposer(this.renderer);
+    this.composer.addPass(renderScene);
+    this.composer.addPass(bloomPass);
 
     // Lighting
     this.ambientLight = new THREE.AmbientLight(0xffffff, 0.2); // Low ambient for space
@@ -47,6 +62,24 @@ export default class Game {
     this.dirLight.shadow.camera.near = 0.1;
     this.dirLight.shadow.camera.far = 1000;
     this.scene.add(this.dirLight);
+
+    // Starfield Background
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 3000;
+    const starPositions = new Float32Array(starCount * 3);
+    for(let i = 0; i < starCount * 3; i++) {
+      starPositions[i] = (Math.random() - 0.5) * 2000; // Spread over 2000 units
+    }
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 1.5,
+      transparent: true,
+      opacity: 0.8,
+      sizeAttenuation: true
+    });
+    this.starfield = new THREE.Points(starGeometry, starMaterial);
+    this.scene.add(this.starfield);
 
     // Components
     this.player = new Player(this.scene);
@@ -204,7 +237,7 @@ export default class Game {
     this.updateUI();
 
     // 7. Render
-    this.renderer.render(this.scene, this.camera);
+    this.composer.render();
   }
 
   updateUI() {
@@ -228,5 +261,6 @@ export default class Game {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.composer.setSize(window.innerWidth, window.innerHeight);
   }
 }

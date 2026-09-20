@@ -6,92 +6,92 @@ export default class Player {
     
     this.mesh = new THREE.Group();
     
-    // Space Ship Materials
+    // Space Ship Materials (Dark Stealth)
     const hullMat = new THREE.MeshStandardMaterial({ 
-      color: 0x88aacc, // Slightly bluish space metal
+      color: 0x0a0a0c, // Very dark grey/black
       metalness: 0.9, 
-      roughness: 0.2 
+      roughness: 0.3,
+      flatShading: true
     });
-    const darkMetal = new THREE.MeshStandardMaterial({ 
-      color: 0x223344, 
-      metalness: 0.9, 
-      roughness: 0.4 
+    const cockpitMat = new THREE.MeshBasicMaterial({ 
+      color: 0x00ffff // Glowing cyan for bloom
     });
-    const glassMaterial = new THREE.MeshStandardMaterial({
-      color: 0x111111,
-      metalness: 0.9,
-      roughness: 0.1,
-      transparent: true,
-      opacity: 0.8
-    });
-    const engineGlow = new THREE.MeshBasicMaterial({ color: 0x00ffff }); // Cyan space exhaust
+    const engineGlow = new THREE.MeshBasicMaterial({ 
+      color: 0x00ffff, 
+      transparent: true, 
+      opacity: 0.7 
+    }); 
 
-    // 1. Fuselage
-    const fuselageGeo = new THREE.CapsuleGeometry(0.5, 3, 4, 16);
+    // 1. Main Fuselage (Sharp stealth body)
+    // ConeGeometry(radius, height, radialSegments)
+    const fuselageGeo = new THREE.ConeGeometry(1, 4, 4);
     fuselageGeo.rotateX(Math.PI / 2);
+    fuselageGeo.rotateZ(Math.PI / 4); // Rotate 45deg so it's a diamond shape
     const fuselage = new THREE.Mesh(fuselageGeo, hullMat);
     fuselage.castShadow = true;
     this.mesh.add(fuselage);
 
-    // 2. Cockpit Canopy
-    const canopyGeo = new THREE.CapsuleGeometry(0.3, 1.5, 4, 16);
+    // 2. Cockpit Window
+    const canopyGeo = new THREE.ConeGeometry(0.5, 2, 4);
     canopyGeo.rotateX(Math.PI / 2);
-    const canopy = new THREE.Mesh(canopyGeo, glassMaterial);
-    canopy.position.set(0, 0.3, -0.5);
-    canopy.rotation.x = -0.1;
+    canopyGeo.rotateZ(Math.PI / 4);
+    const canopy = new THREE.Mesh(canopyGeo, cockpitMat);
+    canopy.position.set(0, 0.5, -0.5);
     this.mesh.add(canopy);
 
-    // 3. Main Wings (swept forward for space fighter look)
-    const wingGeo = new THREE.BoxGeometry(5, 0.1, 1.5);
-    const wings = new THREE.Mesh(wingGeo, darkMetal);
-    wings.position.set(0, 0, 0.5);
-    wings.rotation.y = Math.PI; // Sweep forward
+    // 3. Main Wings (Delta Wing style)
+    const wingGeo = new THREE.ConeGeometry(3.5, 2.5, 3);
+    wingGeo.rotateX(Math.PI / 2);
+    const wings = new THREE.Mesh(wingGeo, hullMat);
+    wings.position.set(0, -0.2, 0.5);
+    wings.scale.set(1, 0.1, 1); // Flatten it
     wings.castShadow = true;
     this.mesh.add(wings);
 
-    // 4. Tail Fin
-    const tailFinGeo = new THREE.BoxGeometry(0.1, 1.2, 1);
-    const tailFin = new THREE.Mesh(tailFinGeo, darkMetal);
-    tailFin.position.set(0, 0.6, 1.5);
-    tailFin.rotation.x = -0.2;
-    tailFin.castShadow = true;
-    this.mesh.add(tailFin);
+    // 4. Tail Fins
+    const tailFinGeo = new THREE.ConeGeometry(0.8, 1.5, 3);
+    tailFinGeo.rotateX(Math.PI / 2);
+    
+    const leftFin = new THREE.Mesh(tailFinGeo, hullMat);
+    leftFin.position.set(-0.8, 0.5, 1.5);
+    leftFin.scale.set(0.1, 1, 1);
+    leftFin.rotation.z = -0.3;
+    this.mesh.add(leftFin);
 
-    // 6. Engine
-    const engineGeo = new THREE.CylinderGeometry(0.3, 0.4, 0.5, 16);
-    engineGeo.rotateX(Math.PI / 2);
-    const engine = new THREE.Mesh(engineGeo, darkMetal);
-    engine.position.set(0, 0, 2.2);
-    this.mesh.add(engine);
+    const rightFin = new THREE.Mesh(tailFinGeo, hullMat);
+    rightFin.position.set(0.8, 0.5, 1.5);
+    rightFin.scale.set(0.1, 1, 1);
+    rightFin.rotation.z = 0.3;
+    this.mesh.add(rightFin);
 
-    // Engine Glow
-    const glowGeo = new THREE.CylinderGeometry(0.25, 0.2, 0.2, 16);
-    glowGeo.rotateX(Math.PI / 2);
-    this.thrusterGlow = new THREE.Mesh(glowGeo, engineGlow);
-    this.thrusterGlow.position.set(0, 0, 2.5);
-    this.mesh.add(this.thrusterGlow);
+    // 5. Engine Exhaust Trails (Massive Cyan Glow)
+    const trailGeo = new THREE.ConeGeometry(0.4, 15, 8);
+    trailGeo.rotateX(-Math.PI / 2); // Point backwards
+    // Move geometry so origin is at the top of the cone (attaches to ship)
+    trailGeo.translate(0, 0, 7.5); 
+    
+    this.leftTrail = new THREE.Mesh(trailGeo, engineGlow);
+    this.leftTrail.position.set(-0.5, 0, 2);
+    this.mesh.add(this.leftTrail);
+
+    this.rightTrail = new THREE.Mesh(trailGeo, engineGlow);
+    this.rightTrail.position.set(0.5, 0, 2);
+    this.mesh.add(this.rightTrail);
 
     // 7. Dynamic Lights
+    // Front Lighting (to light up meteors)
+    const headLight = new THREE.PointLight(0x00ffff, 50, 100);
+    headLight.position.set(0, 0, -2);
+    this.mesh.add(headLight);
+
     // Engine Point Light
-    const engineLight = new THREE.PointLight(0x00ffff, 50, 15);
+    const engineLight = new THREE.PointLight(0x00ffff, 100, 25);
     engineLight.position.set(0, 0, 3.0);
     this.mesh.add(engineLight);
 
-    // Headlight SpotLight
-    const headLight = new THREE.SpotLight(0xffffff, 200, 200, Math.PI / 5, 0.5, 1);
-    headLight.position.set(0, 0, -2.5);
-    
-    // The SpotLight needs a target to point at
-    this.headLightTarget = new THREE.Object3D();
-    this.headLightTarget.position.set(0, 0, -50);
-    this.mesh.add(this.headLightTarget);
-    headLight.target = this.headLightTarget;
-    
-    this.mesh.add(headLight);
-
     // Start position and Scale
     this.mesh.position.set(0, 0, 0);
-    this.mesh.scale.set(0.4, 0.4, 0.4); // Scaled down size
+    this.mesh.scale.set(0.5, 0.5, 0.5); // Slightly larger stealth ship
     this.scene.add(this.mesh);
 
     // Collision Box

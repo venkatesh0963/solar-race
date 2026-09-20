@@ -10,14 +10,17 @@ export default class Environment {
     
     // Materials
     this.matMeteor = new THREE.MeshStandardMaterial({ 
-      color: 0x555555, 
-      roughness: 0.9, 
-      metalness: 0.1 
+      color: 0x111111, // Pitch black rock
+      roughness: 1.0, 
+      flatShading: true
+    });
+    this.matLava = new THREE.MeshBasicMaterial({
+      color: 0xff3300 // Glowing orange lava
     });
     
     // Meteor Shapes
-    this.geoMeteor1 = new THREE.DodecahedronGeometry(4, 0);
-    this.geoMeteor2 = new THREE.IcosahedronGeometry(3, 0);
+    this.geoMeteorBase = new THREE.DodecahedronGeometry(4, 1);
+    this.geoLavaCore = new THREE.IcosahedronGeometry(3.7, 1); // Pokes through to create cracks
 
     // Fuel Coin Shape (Glowing cyan diamond)
     this.geoCoin = new THREE.OctahedronGeometry(1.5, 0);
@@ -102,35 +105,40 @@ export default class Environment {
     const numObstacles = Math.floor(Math.random() * 3) + 2;
     
     for (let i = 0; i < numObstacles; i++) {
-      const shapeToSpawn = Math.random() > 0.5 ? this.geoMeteor1 : this.geoMeteor2;
+      const meteorGroup = new THREE.Group();
       
-      // Randomize meteor colors (rocky browns and greys)
-      const colorOptions = [0x5c4033, 0x4a4a4a, 0x3d2b1f, 0x756b5a];
-      const mat = new THREE.MeshStandardMaterial({
-        color: colorOptions[Math.floor(Math.random() * colorOptions.length)],
-        roughness: 0.9,
-        metalness: 0.1
-      });
+      const rockMesh = new THREE.Mesh(this.geoMeteorBase, this.matMeteor);
+      rockMesh.castShadow = true;
+      rockMesh.receiveShadow = true;
+      meteorGroup.add(rockMesh);
       
-      const mesh = new THREE.Mesh(shapeToSpawn, mat);
+      // Randomly decide if this meteor is a "hot" lava meteor (50% chance)
+      if (Math.random() > 0.5) {
+        const lavaMesh = new THREE.Mesh(this.geoLavaCore, this.matLava);
+        // Randomly rotate lava core so it pokes through different parts of the rock
+        lavaMesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+        meteorGroup.add(lavaMesh);
+      }
       
       // Random position across a wider space track
       const xPos = (Math.random() - 0.5) * 50;
       const yPos = (Math.random() - 0.5) * 30; // Random height
       
       // Meteors spawn far ahead
-      mesh.position.set(xPos, yPos, this.spawnZ);
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
+      meteorGroup.position.set(xPos, yPos, this.spawnZ);
       
       // Random rotation
-      mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      meteorGroup.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
       
-      this.scene.add(mesh);
+      // Random size variation
+      const scale = 0.5 + Math.random() * 1.5;
+      meteorGroup.scale.set(scale, scale, scale);
+      
+      this.scene.add(meteorGroup);
       
       this.obstacles.push({
-        mesh: mesh,
-        box: new THREE.Box3().setFromObject(mesh),
+        mesh: meteorGroup,
+        box: new THREE.Box3().setFromObject(meteorGroup),
         moveSpeedZ: 50 + Math.random() * 50, // They move towards the player at speed 50-100!
         spinSpeed: {
             x: (Math.random() - 0.5) * 2,
