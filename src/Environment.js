@@ -69,7 +69,7 @@ export default class Environment {
     this.scene.add(stars);
   }
 
-  update(dt, playerZ, difficultyMultiplier = 1.0) {
+  update(dt, playerZ, difficultyMultiplier = 1.0, isMagnetActive = false, playerPosition = null) {
     // Spawn new meteors ahead
     if (this.spawnZ > playerZ - 800) {
       this.spawnMeteorRow();
