@@ -260,6 +260,28 @@ export default class Game {
     this.dirLight.target.position.set(0, 0, this.player.mesh.position.z);
     this.dirLight.target.updateMatrixWorld();
 
+    // 3b. Infinite Space (Wrap Background Particles)
+    const starPos = this.starfield.geometry.attributes.position.array;
+    let starsNeedUpdate = false;
+    for(let i=0; i<3000; i++) {
+        // If a star falls behind the camera, wrap it far ahead
+        if(starPos[i*3+2] > this.camera.position.z + 100) {
+            starPos[i*3+2] -= 2000;
+            starsNeedUpdate = true;
+        }
+    }
+    if(starsNeedUpdate) this.starfield.geometry.attributes.position.needsUpdate = true;
+
+    const dustPos = this.nebula.geometry.attributes.position.array;
+    let dustNeedUpdate = false;
+    for(let i=0; i<500; i++) {
+        if(dustPos[i*3+2] > this.camera.position.z + 200) {
+            dustPos[i*3+2] -= 2000;
+            dustNeedUpdate = true;
+        }
+    }
+    if(dustNeedUpdate) this.nebula.geometry.attributes.position.needsUpdate = true;
+
     // 4. Update Environment (pass dt and difficulty)
     this.environment.update(dt, this.player.mesh.position.z, this.difficultyMultiplier);
 
