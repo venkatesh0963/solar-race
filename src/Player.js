@@ -98,7 +98,7 @@ export default class Player {
 
     // Start position and Scale
     this.mesh.position.set(0, 0, 0);
-    this.mesh.scale.set(0.5, 0.5, 0.5); // Slightly larger stealth ship
+    this.mesh.scale.set(0.8, 0.8, 0.8); // Significantly increased plane size
     this.scene.add(this.mesh);
 
     // Collision Box

@@ -378,7 +378,7 @@ button:active {
 #mobile-controls {
   position: absolute;
   bottom: 5vh;
-  left: 5vw;
+  right: 5vw;
   width: min(200px, 45vw);
   aspect-ratio: 3 / 2;
   pointer-events: none;
