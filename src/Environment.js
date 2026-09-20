@@ -256,8 +256,14 @@ export default class Environment {
 
   checkCoinCollisions(playerBox) {
     let collected = 0;
+    // Make the coin's hitbox much larger than its visual size so it's easy to grab
+    // and stretch it heavily in the Z axis to prevent "tunneling" right through it at high speeds!
+    const magneticReach = new THREE.Vector3(5, 5, 20); 
+    
     for (let i = this.coins.length - 1; i >= 0; i--) {
       this.coins[i].box.setFromObject(this.coins[i].mesh);
+      this.coins[i].box.expandByVector(magneticReach);
+      
       if (playerBox.intersectsBox(this.coins[i].box)) {
         // Collect!
         this.scene.remove(this.coins[i].mesh);
