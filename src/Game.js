@@ -63,6 +63,19 @@ export default class Game {
     this.dirLight.shadow.camera.far = 1000;
     this.scene.add(this.dirLight);
 
+    // Create a procedural soft glowing texture for particles (fixes the "square box" issue)
+    const particleCanvas = document.createElement('canvas');
+    particleCanvas.width = 64;
+    particleCanvas.height = 64;
+    const ctx = particleCanvas.getContext('2d');
+    const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gradient.addColorStop(0, 'rgba(255,255,255,1)');
+    gradient.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 64, 64);
+    const particleTexture = new THREE.CanvasTexture(particleCanvas);
+
     // Starfield Background
     const starGeometry = new THREE.BufferGeometry();
     const starCount = 3000;
@@ -73,10 +86,12 @@ export default class Game {
     starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
     const starMaterial = new THREE.PointsMaterial({
       color: 0xffffff,
-      size: 1.5,
+      size: 2.5,
+      map: particleTexture,
       transparent: true,
-      opacity: 0.8,
-      sizeAttenuation: true
+      opacity: 0.9,
+      sizeAttenuation: true,
+      depthWrite: false
     });
     this.starfield = new THREE.Points(starGeometry, starMaterial);
     this.scene.add(this.starfield);
@@ -110,10 +125,11 @@ export default class Game {
     dustGeo.setAttribute('color', new THREE.BufferAttribute(dustColors, 3));
     
     const dustMat = new THREE.PointsMaterial({
-      size: 60, // Massive soft particles
+      size: 100, // Massive soft clouds
       vertexColors: true,
+      map: particleTexture,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.15, // Soft ambient glow
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
