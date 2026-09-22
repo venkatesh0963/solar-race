@@ -390,7 +390,7 @@ button:active {
 /* Mobile Controls (Inverted-T D-Pad) */
 #mobile-controls {
   position: absolute;
-  bottom: 5vh;
+  bottom: 12vh;
   right: 5vw;
   width: min(280px, 65vw);
   height: min(180px, 40vw);
