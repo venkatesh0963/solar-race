@@ -392,8 +392,8 @@ button:active {
   position: absolute;
   bottom: 5vh;
   right: 5vw;
-  width: min(200px, 45vw);
-  aspect-ratio: 3 / 2;
+  width: min(280px, 65vw);
+  height: min(180px, 40vw);
   pointer-events: none;
   z-index: 10000;
 }
@@ -438,7 +438,7 @@ button:active {
 .dpad-right { grid-column: 3; grid-row: 2; }
 
 /* Hide on Desktop screens automatically */
-@media (min-width: 1024px) {
+@media (pointer: fine) {
   #mobile-controls {
     display: none !important;
   }
