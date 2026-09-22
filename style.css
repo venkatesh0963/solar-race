@@ -392,8 +392,8 @@ button:active {
   position: absolute;
   bottom: 12vh;
   right: 5vw;
-  width: min(280px, 65vw);
-  height: min(180px, 40vw);
+  width: min(220px, 50vw);
+  height: min(150px, 35vw);
   pointer-events: none;
   z-index: 10000;
 }
